@@ -1,0 +1,60 @@
+.bg-form {
+  background-color: #cacfd2;
+}
+
+.row {
+  margin-bottom: 20px;
+
+  label {
+    font-weight: bold;
+  }
+
+  button {
+    border-radius: 0;
+    transition: background ease-in-out 0.3s;
+
+    &:hover {
+      background: #cacfd2;
+    }
+  }
+
+  .data-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.row:last-child {
+  margin-bottom: 50px;
+
+  .box-fields {
+    width: 60%;
+    text-align: center;
+    border: 1px solid #121212;
+    border-radius: .2rem;
+    transition: all ease-in-out .3s;
+
+    &:hover {
+      cursor: pointer;
+      color: white;
+      background: rgba(black, .6);
+    }
+  }
+
+  .col:first-child > ul {
+    max-height: 269px;
+    overflow-y: auto !important;
+  }
+}
+
+footer {
+  color: white;
+  position: fixed;
+  bottom: 0;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
