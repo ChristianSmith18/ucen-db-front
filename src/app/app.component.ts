@@ -89,7 +89,7 @@ export class AppComponent {
       html: `
       <div class="form-row row">
         <div class="col-sm-12 form-group">
-          <label for="name">Nombre:</label>
+          <label for="name" class="font-weight-bold w-100 text-left">Nombre:</label>
           <input
             type="text"
             class="form-control"
@@ -99,7 +99,7 @@ export class AppComponent {
           />
         </div>
         <div class="col-sm-12">
-          <label for="lastname">Apellido:</label>
+          <label for="lastname" class="font-weight-bold w-100 text-left">Apellido:</label>
           <input
             type="text"
             class="form-control"
@@ -108,8 +108,8 @@ export class AppComponent {
             value="${this.users[this.currentIndex].lastname}"
           />
         </div>
-        <div class="col-sm-12 p-0">
-          <label for="lastname">Número de teléfono:</label>
+        <div class="col-sm-12 p-0 pt-2">
+          <label for="lastname" class="font-weight-bold w-100 text-left">Número de teléfono:</label>
           <div class="input-group">
             <div class="input-group-prepend">
               <span class="input-group-text" id="basic-addon1">+56 9</span>

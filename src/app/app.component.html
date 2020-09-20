@@ -10,7 +10,6 @@
             <input
               type="text"
               class="form-control"
-              id="name"
               placeholder="Ingrese el nombre del nuevo usuario..."
               [(ngModel)]="name"
               [ngModelOptions]="{ standalone: true }"
@@ -23,7 +22,6 @@
             <input
               type="text"
               class="form-control"
-              id="lastname"
               placeholder="Ingrese el apellido del nuevo usuario..."
               [(ngModel)]="lastname"
               [ngModelOptions]="{ standalone: true }"
@@ -35,12 +33,11 @@
             <label for="lastname">Número de teléfono:</label>
             <div class="input-group">
               <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">+56 9</span>
+                <span class="input-group-text">+56 9</span>
               </div>
               <input
                 type="number"
                 class="form-control"
-                id="phonenumber"
                 placeholder="1234 5678"
                 [(ngModel)]="phonenumber"
                 [ngModelOptions]="{ standalone: true }"
