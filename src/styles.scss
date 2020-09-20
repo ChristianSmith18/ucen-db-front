@@ -4,3 +4,7 @@
 body {
   font-family: "Open Sans", sans-serif;
 }
+
+.row [class*='col-'] {
+  transition: flex 0.5s ease-in-out, max-width .5s ease-in-out;
+}

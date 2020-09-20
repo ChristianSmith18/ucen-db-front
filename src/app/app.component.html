@@ -14,6 +14,8 @@
               placeholder="Ingrese el nombre del nuevo usuario..."
               [(ngModel)]="name"
               [ngModelOptions]="{ standalone: true }"
+              oninput="javascript: if (this.value.split(' ').length > 1) this.value = this.value.split(' ')[0]"
+              onkeyup="this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1)"
             />
           </div>
           <div class="col-sm-12 col-md-6 col-lg-4">
@@ -25,6 +27,8 @@
               placeholder="Ingrese el apellido del nuevo usuario..."
               [(ngModel)]="lastname"
               [ngModelOptions]="{ standalone: true }"
+              oninput="javascript: if (this.value.split(' ').length > 1) this.value = this.value.split(' ')[0]"
+              onkeyup="this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1)"
             />
           </div>
           <div class="col-sm-12 col-md-6 col-lg-4 p-0">
@@ -38,9 +42,10 @@
                 class="form-control"
                 id="phonenumber"
                 placeholder="1234 5678"
-                aria-label="Phonenumber"
                 [(ngModel)]="phonenumber"
                 [ngModelOptions]="{ standalone: true }"
+                oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                maxlength="8"
               />
             </div>
           </div>
