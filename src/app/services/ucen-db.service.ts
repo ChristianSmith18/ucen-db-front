@@ -32,12 +32,12 @@ export class UcenDbService {
   }
 
   // tslint:disable-next-line: typedef
-  public updateUser(id: string, newUser: User) {
-    return this.http.put<ResponseUser>(`${environment.url}?id=${id}`, newUser);
+  public updateUser(newUser: User) {
+    return this.http.put<ResponseUser>(`${environment.url}`, newUser);
   }
 
   // tslint:disable-next-line: typedef
-  public deleteUser(id: string) {
+  public deleteUser(id: number) {
     return this.http.delete<ResponseUser>(`${environment.url}?id=${id}`);
   }
 }

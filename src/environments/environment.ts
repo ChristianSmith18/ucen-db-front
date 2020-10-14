@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   url: 'http://localhost:3000/user',
+  randomUser: 'https://randomuser.me/api/?nat=dk',
 };
 
 /*

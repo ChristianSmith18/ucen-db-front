@@ -1,8 +1,9 @@
-import { SwalService } from './services/swal.service';
-import { UcenDbService } from './services/ucen-db.service';
 import { Component } from '@angular/core';
 import { User } from './user.interface';
 import Swal from 'sweetalert2';
+import { SwalService } from './services/swal.service';
+import { UcenDbService } from './services/ucen-db.service';
+import { RandomUserService } from './services/random-user.service';
 
 @Component({
   selector: 'app-root',
@@ -13,15 +14,26 @@ export class AppComponent {
   public users: User[] = [];
   public currentIndex: number = null;
 
+  public rut: number = null;
   public name: string = null;
   public lastname: string = null;
   public phonenumber: number = null;
 
   constructor(
     private readonly db: UcenDbService,
-    private readonly swal: SwalService
+    private readonly swal: SwalService,
+    private readonly ruser: RandomUserService
   ) {
     this.refreshData();
+  }
+
+  public genRandomUser(): void {
+    this.ruser.getUser().subscribe((user) => {
+      this.rut = user.rut;
+      this.name = user.firstname;
+      this.lastname = user.lastname;
+      this.phonenumber = user.phonenumber;
+    });
   }
 
   private refreshData(): void {
@@ -34,34 +46,40 @@ export class AppComponent {
   public setCurrentIndex(index: number): void {
     this.currentIndex = index;
 
-    document.querySelectorAll('.box-fields')[0].innerHTML = this.users[
-      this.currentIndex
-    ].name;
+    document.querySelectorAll('.box-fields')[0].innerHTML = this.dgv(
+      this.users[this.currentIndex].rut
+    );
     document.querySelectorAll('.box-fields')[1].innerHTML = this.users[
       this.currentIndex
+    ].firstname;
+    document.querySelectorAll('.box-fields')[2].innerHTML = this.users[
+      this.currentIndex
     ].lastname;
-    document.querySelectorAll('.box-fields')[2].innerHTML =
+    document.querySelectorAll('.box-fields')[3].innerHTML =
       '+56 9 ' + this.users[this.currentIndex].phonenumber;
   }
 
   public clearIndex(): void {
     this.currentIndex = null;
 
-    document.querySelectorAll('.box-fields')[0].innerHTML = 'Nombre';
-    document.querySelectorAll('.box-fields')[1].innerHTML = 'Apellido';
-    document.querySelectorAll('.box-fields')[2].innerHTML = 'Telefono';
+    document.querySelectorAll('.box-fields')[0].innerHTML = 'Rut';
+    document.querySelectorAll('.box-fields')[1].innerHTML = 'Nombre';
+    document.querySelectorAll('.box-fields')[2].innerHTML = 'Apellido';
+    document.querySelectorAll('.box-fields')[3].innerHTML = 'Telefono';
   }
 
   public createUser(): void {
     const user: User = {
-      name: this.name,
+      firstname: this.name,
       lastname: this.lastname,
       phonenumber: this.phonenumber,
+      rut: Number(this.rut),
     };
 
     this.db.createUser(user).subscribe(
       ({ ok }) => {
         if (ok) {
+          this.rut = null;
           this.name = null;
           this.lastname = null;
           this.phonenumber = null;
@@ -77,6 +95,7 @@ export class AppComponent {
         }
       },
       (err) => {
+        console.warn(err);
         this.swal.showMixin('Ha ocurrido un problema!', 'error');
       }
     );
@@ -95,7 +114,9 @@ export class AppComponent {
             class="form-control"
             id="swal-input1"
             placeholder="Ingrese el nombre del nuevo usuario..."
-            value="${this.users[this.currentIndex].name}"
+            value="${this.users[this.currentIndex].firstname}"
+            oninput="javascript: if (this.value.split(' ').length > 1) this.value = this.value.split(' ')[0]"
+            onkeyup="this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1)"
           />
         </div>
         <div class="col-sm-12">
@@ -106,6 +127,8 @@ export class AppComponent {
             id="swal-input2"
             placeholder="Ingrese el apellido del nuevo usuario..."
             value="${this.users[this.currentIndex].lastname}"
+            oninput="javascript: if (this.value.split(' ').length > 1) this.value = this.value.split(' ')[0]"
+            onkeyup="this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1)"
           />
         </div>
         <div class="col-sm-12 p-0 pt-2">
@@ -121,6 +144,8 @@ export class AppComponent {
               placeholder="1234 5678"
               aria-label="Phonenumber"
               value="${this.users[this.currentIndex].phonenumber}"
+              oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+              maxlength="8"
             />
           </div>
         </div>
@@ -139,14 +164,18 @@ export class AppComponent {
 
     if (formValues) {
       const user: User = {
-        name: formValues[0],
+        rut: this.clearRutBox(
+          document.querySelectorAll('.box-fields')[0].innerHTML
+        ),
+        firstname: formValues[0],
         lastname: formValues[1],
         phonenumber: Number(formValues[2]),
       };
 
-      this.db.updateUser(this.users[this.currentIndex].id, user).subscribe(
+      this.db.updateUser(user).subscribe(
         ({ ok }) => {
           if (ok) {
+            this.rut = null;
             this.name = null;
             this.lastname = null;
             this.phonenumber = null;
@@ -166,6 +195,10 @@ export class AppComponent {
     }
   }
 
+  private clearRutBox(rut: string): number {
+    return Number(rut.split('-')[0].replace('.', '').replace('.', ''));
+  }
+
   // tslint:disable-next-line: typedef
   public async deleteUser() {
     Swal.fire({
@@ -179,7 +212,7 @@ export class AppComponent {
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.db.deleteUser(this.users[this.currentIndex].id).subscribe(
+        this.db.deleteUser(this.users[this.currentIndex].rut).subscribe(
           ({ ok }) => {
             if (ok) {
               this.name = null;
@@ -200,5 +233,20 @@ export class AppComponent {
         );
       }
     });
+  }
+
+  private tarifaFormat(numero: number): string {
+    return numero.toLocaleString('en-US').replace(',', '.').replace(',', '.');
+  }
+
+  private dgv(rut: number): string {
+    const rutFormat = this.tarifaFormat(rut);
+    let M = 0;
+    let S = 1;
+    for (; rut; rut = Math.floor(rut / 10)) {
+      S = (S + (rut % 10) * (9 - (M++ % 6))) % 11;
+    }
+
+    return `${rutFormat}-${S ? S - 1 : 'k'}`;
   }
 }

@@ -1,10 +1,22 @@
 <div class="container">
-  <h2 class="py-3"><b>Registro de Contáctos</b></h2>
+  <h2 class="py-2"><b>Registro de Contáctos</b></h2>
 
   <div class="row">
     <div class="col">
-      <form class="bg-form rounded p-4 w-100">
+      <form class="bg-form rounded py-2 px-4 w-100">
         <div class="form-row row">
+          <div class="col-sm-12 col-md-6 col-lg-4 form-group">
+            <label for="rut">Rut:</label>
+            <input
+              type="number"
+              class="form-control"
+              placeholder="Ingrese el rut del nuevo usuario..."
+              [(ngModel)]="rut"
+              [ngModelOptions]="{ standalone: true }"
+              oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+              maxlength="8"
+            />
+          </div>
           <div class="col-sm-12 col-md-6 col-lg-4 form-group">
             <label for="name">Nombre:</label>
             <input
@@ -55,6 +67,14 @@
           >
             Registrar
           </button>
+
+          <button
+            type="submit"
+            class="btn btn-info px-5 ml-2 rounded"
+            (click)="genRandomUser()"
+          >
+            Random
+          </button>
         </div>
       </form>
     </div>
@@ -71,7 +91,7 @@
             class="btn w-100 text-left p-2 pl-4"
             (click)="setCurrentIndex(i)"
           >
-            {{ user.name | titlecase }}
+            {{ user.firstname | titlecase }}
           </button>
         </li>
       </ul>
@@ -79,6 +99,7 @@
     <div class="col-md-12 col-lg-6">
       <div class="data-container bg-form w-100 h-100 rounded py-3">
         <h3><b>Datos del contacto</b></h3>
+        <p class="box-fields">Rut</p>
         <p class="box-fields">Nombre</p>
         <p class="box-fields">Apellido</p>
         <p class="box-fields">Telefono</p>
