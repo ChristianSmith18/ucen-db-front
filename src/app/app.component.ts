@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import { SwalService } from './services/swal.service';
 import { UcenDbService } from './services/ucen-db.service';
 import { RandomUserService } from './services/random-user.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-root',
@@ -22,18 +23,30 @@ export class AppComponent {
   constructor(
     private readonly db: UcenDbService,
     private readonly swal: SwalService,
-    private readonly ruser: RandomUserService
+    private readonly ruser: RandomUserService,
+    private spinner: NgxSpinnerService
   ) {
     this.refreshData();
   }
 
   public genRandomUser(): void {
-    this.ruser.getUser().subscribe((user) => {
-      this.rut = user.rut;
-      this.name = user.firstname;
-      this.lastname = user.lastname;
-      this.phonenumber = user.phonenumber;
-    });
+    this.spinner.show();
+    this.ruser.getUser().subscribe(
+      (user) => {
+        this.rut = user.rut;
+        this.name = user.firstname;
+        this.lastname = user.lastname;
+        this.phonenumber = user.phonenumber;
+        this.spinner.hide();
+      },
+      (_) => {
+        this.swal.showMixin(
+          'Surgió un problema al generar el usuario',
+          'error'
+        );
+        this.spinner.hide();
+      }
+    );
   }
 
   private refreshData(): void {
@@ -96,7 +109,11 @@ export class AppComponent {
       },
       (err) => {
         console.warn(err);
-        this.swal.showMixin('Ha ocurrido un problema!', 'error');
+        if (err.error.message) {
+          this.swal.showMixin(err.error.message.join('\n'), 'error');
+        } else {
+          this.swal.showMixin('Ha ocurrido un problema!', 'error');
+        }
       }
     );
   }
